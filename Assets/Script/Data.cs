@@ -24,13 +24,19 @@ public static class Data
 
 
 
+
+    //カメラのパラメータ
+    public const float CameraDistance = 2.5f;//カメラとプレイヤーとの距離
+    public const float CameraTilt = 35f;//カメラの傾き
+    public const float CameraSpeed = 5f;//カメラの追従速度
+
     //アニメーションのフラグ名
     static public string AnimationRun = "Run";
     static public string AnimationDie = "Die";
     static public string AnimationDefend = "Defend";
     static public string AnimationDamaged = "Damaged";
     static public string AnimationWalk = "Walk";
-    
+
 
 
 

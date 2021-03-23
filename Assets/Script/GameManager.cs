@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
 
     //プレイヤーの動作
     private Player _playerScr = new Player();
+    private CameraManager _cameraScr = new CameraManager();
 
     private void Awake()
     {
@@ -56,6 +57,7 @@ public class GameManager : MonoBehaviour
 
             //ゲームシーン
             case Data.GameSceneNumber:
+                _cameraScr.OnUpdate();
                 break;
         }
     }
@@ -82,6 +84,7 @@ public class GameManager : MonoBehaviour
 
                 //初期処理
                 _playerScr.OnStart();
+                _cameraScr.OnStart();
                 break;
         }
 
