@@ -10,20 +10,44 @@ public static class Data
     static public bool IsGameManager = false;
 
     //キー情報
-    static public readonly KeyCode UP = KeyCode.UpArrow;
-    static public readonly KeyCode Down = KeyCode.DownArrow;
-    static public readonly KeyCode Right = KeyCode.RightArrow;
-    static public readonly KeyCode Left = KeyCode.LeftArrow;
+    static public readonly KeyCode UP = KeyCode.W;
+    static public readonly KeyCode Down = KeyCode.S;
+    static public readonly KeyCode Right = KeyCode.D;
+    static public readonly KeyCode Left = KeyCode.A;
 
     static public readonly KeyCode Attack = KeyCode.Space;
     static public readonly KeyCode Defense = KeyCode.LeftShift;
+
+
+    //キャラクターのパラメータ
+    public const float CharacterSpeed = 100;//キャラクターの移動速度
+    public const float CharacterMaxSpeed = 100;//キャラクターの最高速度
+
+
+
+    //アニメーションのフラグ名
+    static public string AnimationRun = "Run";
+    static public string AnimationDie = "Die";
+    static public string AnimationDefend = "Defend";
+    static public string AnimationDamaged = "Damaged";
+    static public string AnimationWalk = "Walk";
+    
+
+
+
+
+
+
+
+
+
 
     //現在のシーン情報
     static public int SceneNumber { get; private set; } = 0;
 
     //それぞれのシーンの番号
-    public const int TitleSceneNumber = 0;//タイトル
-    public const int GameSceneNumber = 1;//ゲームシーン
+    public const int TitleSceneNumber = 99;//タイトル
+    public const int GameSceneNumber = 0;//ゲームシーン
 
     //それぞれのデータタグ名
     public const string TitleDataTagName = "TitleData";

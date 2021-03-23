@@ -8,6 +8,11 @@ public class GameManager : MonoBehaviour
 {
     //シングルトン
     private static GameManager _gameManager = default;
+    //ゲームシーンのデータ情報
+    private GameSerializeData _gameData = default;
+
+    //プレイヤーの動作
+    private Player _playerScr = new Player();
 
     private void Awake()
     {
@@ -36,6 +41,7 @@ public class GameManager : MonoBehaviour
 
             //ゲームシーン
             case Data.GameSceneNumber:
+                _playerScr.OnUpdate();
                 break;
         }
     }
@@ -55,6 +61,13 @@ public class GameManager : MonoBehaviour
 
             //ゲームシーン
             case Data.GameSceneNumber:
+                //ゲームシーンのデータを取得
+                _gameData = GameObject.FindGameObjectWithTag(Data.GameDataTagName).GetComponent<GameSerializeData>();
+                //取得したデータを設定する。
+                _gameData.SetSerializeData(_gameData);
+
+                //初期処理
+                _playerScr.OnStart();
                 break;
         }
 
