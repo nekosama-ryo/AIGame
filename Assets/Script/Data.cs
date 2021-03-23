@@ -20,8 +20,7 @@ public static class Data
 
 
     //キャラクターのパラメータ
-    public const float CharacterSpeed = 100;//キャラクターの移動速度
-    public const float CharacterMaxSpeed = 100;//キャラクターの最高速度
+    public const float CharacterSpeed = 250;//キャラクターの移動速度
 
 
 

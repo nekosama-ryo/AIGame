@@ -12,19 +12,19 @@ public class Player
         
     }
 
-    public void OnUpdate()
+    public void OnFixedUpdate()
     {
         KeyMove();
     }
 
-    /// <summary>キー入力に応じて移動する </summary>
+    /// <summary>キー入力に応じて移動・回転する </summary>
     private void KeyMove()
     {
         //キー入力から力量を設定する
         _controlScr.CharacterMoveZ(Input.GetKey(Data.UP),Input.GetKey(Data.Down));
         _controlScr.CharacterMoveX(Input.GetKey(Data.Right),Input.GetKey(Data.Left));
 
-        //力量に応じた移動を行う
+        //力量に応じた移動・回転を行う
         _controlScr.CharacterMove();
     }
 

@@ -28,6 +28,21 @@ public class GameManager : MonoBehaviour
     {
 
     }
+    private void FixedUpdate()
+    {
+        //各シーンで行う処理
+        switch (Data.SceneNumber)
+        {
+            //タイトルシーン
+            case Data.TitleSceneNumber:
+                break;
+
+            //ゲームシーン
+            case Data.GameSceneNumber:
+                _playerScr.OnFixedUpdate();
+                break;
+        }
+    }
 
     private void Update()
     {
@@ -41,7 +56,6 @@ public class GameManager : MonoBehaviour
 
             //ゲームシーン
             case Data.GameSceneNumber:
-                _playerScr.OnUpdate();
                 break;
         }
     }

@@ -8,9 +8,13 @@ public class CharacterControl
     //コンストラクタ
     public CharacterControl(Transform Charatrs, Rigidbody CharaRigid, Animator CharaAnim)
     {
+        //コンポーネントの設定
         _tr = Charatrs;
         _rb = CharaRigid;
         _ani = CharaAnim;
+
+        //初期位置の取得
+        _latestPos = _tr.position;
     }
 
     //コンポーネントの情報
@@ -19,6 +23,8 @@ public class CharacterControl
     private Animator _ani = default;
     //現在の移動力量
     private Vector3 _force = Vector3.zero;
+    //前回の位置情報
+    private Vector3 _latestPos = Vector3.zero;
 
 
     //移動処理
@@ -71,7 +77,18 @@ public class CharacterControl
         //加える力を設定
         _force.z = Data.CharacterSpeed * i;
     }
-    /// <summary>力量に応じたキャラクターの移動を行う </summary>
+    /// <summary>フラグに応じてキャラクターのX軸に力を加える </summary>
+    public void CharacterRotation()
+    {
+        Vector3 diff = _tr.position - _latestPos;
+        _latestPos = _tr.position;
+
+        if(diff.magnitude>0.07f)
+        {
+            _tr.rotation = Quaternion.LookRotation(diff);
+        }
+    }
+    /// <summary>力量に応じたキャラクターの移動・回転を行う </summary>
     public void CharacterMove()
     {
         //アニメーションの再生
@@ -80,7 +97,8 @@ public class CharacterControl
 
         //移動処理
         _rb.AddForce(_force);
-        Debug.Log(_rb.velocity);
+        //回転処理
+        CharacterRotation();
     }
 
     //攻撃処理
