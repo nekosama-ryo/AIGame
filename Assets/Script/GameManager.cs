@@ -15,6 +15,9 @@ public class GameManager : MonoBehaviour
     private Player _playerScr = new Player();
     private CameraManager _cameraScr = new CameraManager();
 
+
+    private TestAI _testAI = new TestAI();
+
     private void Awake()
     {
         //シングルトン処理
@@ -41,6 +44,7 @@ public class GameManager : MonoBehaviour
             //ゲームシーン
             case Data.GameSceneNumber:
                 _playerScr.OnFixedUpdate();
+                _testAI.OnUpdate();
                 break;
         }
     }
@@ -85,6 +89,7 @@ public class GameManager : MonoBehaviour
                 //初期処理
                 _playerScr.OnStart();
                 _cameraScr.OnStart();
+                _testAI.OnStart();
                 break;
         }
 

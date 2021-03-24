@@ -18,6 +18,11 @@ public static class Data
     static public readonly KeyCode Attack = KeyCode.Space;
     static public readonly KeyCode Defense = KeyCode.LeftShift;
 
+    static public readonly KeyCode CameraRight = KeyCode.Q;
+    static public readonly KeyCode CameraLeft = KeyCode.E;
+    static public readonly KeyCode CameraReset = KeyCode.R;
+    static public readonly KeyCode CameraTarget = KeyCode.Tab;
+
 
     //キャラクターのパラメータ
     public const float CharacterSpeed = 250;//キャラクターの移動速度
@@ -28,7 +33,8 @@ public static class Data
     //カメラのパラメータ
     public const float CameraDistance = 2.5f;//カメラとプレイヤーとの距離
     public const float CameraTilt = 35f;//カメラの傾き
-    public const float CameraSpeed = 5f;//カメラの追従速度
+    public const float CameraFollowSpeed = 5f;//カメラの追従速度
+    public const float CameraSpeed = 15f;//カメラの追従速度
 
     //アニメーションのフラグ名
     static public string AnimationRun = "Run";

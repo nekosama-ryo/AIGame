@@ -16,6 +16,11 @@ public class GameSerializeData : MonoBehaviour
     public Rigidbody _PlayerRigidbody = default;
     public Animator _PlayerAnimator = default;
 
+    [Header("AI")]
+    public Transform _AITransform = default;
+    public Rigidbody _AIRigidbody = default;
+    public Animator _AIAnimator = default;
+
     [Header("カメラ")]
     public Transform _CameraTransform = default;
 

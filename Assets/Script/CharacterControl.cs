@@ -61,7 +61,7 @@ public class CharacterControl
         //加える力を設定
         _force.y = Data.CharacterSpeed * i;
     }
-    /// <summary>フラグに応じてキャラクターのX軸に力を加える </summary>
+    /// <summary>フラグに応じてキャラクターのZ軸に力を加える </summary>
     public void CharacterMoveZ(bool flag, bool minusFlag)
     {
         //どちらも押されていないか、どちらも押されている、力が最大値を超えた場合

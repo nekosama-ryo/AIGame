@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class CameraManager
 {
+    //カメラの情報
     private Vector3 _camPos = default;
     private Quaternion _camRot = default;
+
+    private bool _isTarget = false;
 
     public void OnStart()
     {
@@ -16,21 +19,57 @@ public class CameraManager
 
     public void OnUpdate()
     {
-        //カメラのプレイヤー追従処理
-        CameraMove(GameSerializeData.GameData._PlayerTransform, GameSerializeData.GameData._CameraTransform);
+        Target();
+        Reset();
+        Gradually();
+
+        //カメラの挙動
+        CameraMove();
     }
 
-    private void CameraMove(Transform player,Transform camera)
+    private void CameraMove()
     {
         //プレイヤーの後ろの位置を設定
-        _camPos.x = player.position.x+ (-player.forward.x*Data.CameraDistance);
-        _camPos.z = player.position.z + (-player.forward.z*Data.CameraDistance);
-
-        //カメラの角度をプレイヤーの向いている方向に設定
-        _camRot =Quaternion.AngleAxis(player.eulerAngles.y,Vector3.up)*Quaternion.AngleAxis(Data.CameraTilt,Vector3.right);
+        _camPos.x = GameSerializeData.GameData._PlayerTransform.position.x + (-GameSerializeData.GameData._CameraTransform.forward.x * Data.CameraDistance);
+        _camPos.z = GameSerializeData.GameData._PlayerTransform.position.z + (-GameSerializeData.GameData._CameraTransform.forward.z * Data.CameraDistance);
 
         //カメラの情報を設定
-        camera.position = Vector3.Lerp(camera.position, _camPos, Time.deltaTime * Data.CameraSpeed);
-        camera.rotation = Quaternion.Lerp(camera.rotation, _camRot, Time.deltaTime * Data.CameraSpeed);
+        GameSerializeData.GameData._CameraTransform.position = Vector3.Lerp(GameSerializeData.GameData._CameraTransform.position, _camPos, Time.deltaTime * Data.CameraFollowSpeed);
+        GameSerializeData.GameData._CameraTransform.rotation = Quaternion.Lerp(GameSerializeData.GameData._CameraTransform.rotation, _camRot, Time.deltaTime * Data.CameraFollowSpeed);
+    }
+
+    private void Reset()
+    {
+        if (Input.GetKeyDown(Data.CameraReset))
+        {
+            //カメラの角度をプレイヤーの向いている方向に設定
+            _camRot = Quaternion.AngleAxis(GameSerializeData.GameData._PlayerTransform.eulerAngles.y, Vector3.up) * Quaternion.AngleAxis(Data.CameraTilt, Vector3.right);
+            _isTarget = false;
+        }
+    }
+
+    private void Gradually()
+    {
+        if (Input.GetKey(Data.CameraRight))
+        {
+            _camRot = Quaternion.AngleAxis(GameSerializeData.GameData._CameraTransform.eulerAngles.y - Data.CameraSpeed, Vector3.up) * Quaternion.AngleAxis(Data.CameraTilt, Vector3.right);
+            _isTarget = false;
+        }
+        if (Input.GetKey(Data.CameraLeft))
+        {
+            _camRot = Quaternion.AngleAxis(GameSerializeData.GameData._CameraTransform.eulerAngles.y + Data.CameraSpeed, Vector3.up) * Quaternion.AngleAxis(Data.CameraTilt, Vector3.right);
+            _isTarget = false;
+        }
+    }
+
+    private void Target()
+    {
+        if (Input.GetKeyDown(Data.CameraTarget))
+        {
+            _isTarget = !_isTarget;
+        }
+
+        if (!_isTarget) return;
+        _camRot = Quaternion.LookRotation(GameSerializeData.GameData._AITransform.position, Vector3.up) * Quaternion.AngleAxis(Data.CameraTilt, Vector3.right);
     }
 }
