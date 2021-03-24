@@ -45,22 +45,6 @@ public class CharacterControl
         //加える力を設定
         _force.x = Data.CharacterSpeed * i;
     }
-    /// <summary>フラグに応じてキャラクターのY軸に力を加える </summary>
-    public void CharacterMoveY(bool flag, bool minusFlag)
-    {
-        //どちらも押されていないか、どちらも押されている、力が最大値を超えた場合
-        if (!flag && !minusFlag || flag && minusFlag)
-        {
-            //力のリセット
-            _force.y = 0;
-            return;
-        }
-
-        //力の加える方向を調べる
-        int i = flag && !minusFlag ? 1 : -1;
-        //加える力を設定
-        _force.y = Data.CharacterSpeed * i;
-    }
     /// <summary>フラグに応じてキャラクターのZ軸に力を加える </summary>
     public void CharacterMoveZ(bool flag, bool minusFlag)
     {
@@ -77,12 +61,14 @@ public class CharacterControl
         //加える力を設定
         _force.z = Data.CharacterSpeed * i;
     }
-    /// <summary>フラグに応じてキャラクターのX軸に力を加える </summary>
+    /// <summary>キャラクターの向きを調整する </summary>
     public void CharacterRotation()
     {
+        //前回の向きとの差を求める。
         Vector3 diff = _tr.position - _latestPos;
         _latestPos = _tr.position;
 
+        //差が大きければキャラクターの向きを調整する
         if(diff.magnitude>0.07f)
         {
             _tr.rotation = Quaternion.LookRotation(diff);
@@ -91,12 +77,17 @@ public class CharacterControl
     /// <summary>力量に応じたキャラクターの移動・回転を行う </summary>
     public void CharacterMove()
     {
+        CharacterMove(_force);
+    }
+    /// <summary>力量を指定してキャラクターの移動・回転を行う </summary>
+    public void CharacterMove(Vector3 force)
+    {
         //アニメーションの再生
-        bool aniFlag = _force != Vector3.zero ? true : false;
+        bool aniFlag = force != Vector3.zero ? true : false;
         _ani.SetBool(Data.AnimationRun, aniFlag);
 
         //移動処理
-        _rb.AddForce(_force);
+        _rb.AddForce(force);
         //回転処理
         CharacterRotation();
     }

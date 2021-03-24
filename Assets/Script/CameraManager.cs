@@ -8,7 +8,7 @@ public class CameraManager
     private Vector3 _camPos = default;
     private Quaternion _camRot = default;
 
-    private bool _isTarget = false;
+    //ターゲットカメラの状態
 
     public void OnStart()
     {
@@ -19,14 +19,15 @@ public class CameraManager
 
     public void OnUpdate()
     {
-        Target();
-        Reset();
-        Gradually();
+        Target(Input.GetKeyDown(Data.CameraTarget));
+        Reset(Input.GetKeyDown(Data.CameraReset));
+        Gradually(Input.GetKey(Data.CameraRight), Input.GetKey(Data.CameraLeft));
 
         //カメラの挙動
         CameraMove();
     }
 
+    /// <summary>カメラの挙動 </summary>
     private void CameraMove()
     {
         //プレイヤーの後ろの位置を設定
@@ -38,38 +39,55 @@ public class CameraManager
         GameSerializeData.GameData._CameraTransform.rotation = Quaternion.Lerp(GameSerializeData.GameData._CameraTransform.rotation, _camRot, Time.deltaTime * Data.CameraFollowSpeed);
     }
 
-    private void Reset()
+    /// <summary>カメラの角度をプレイヤーの向いている方向に変更 </summary>
+    private void Reset(bool key)
     {
-        if (Input.GetKeyDown(Data.CameraReset))
+        if (key)
         {
             //カメラの角度をプレイヤーの向いている方向に設定
             _camRot = Quaternion.AngleAxis(GameSerializeData.GameData._PlayerTransform.eulerAngles.y, Vector3.up) * Quaternion.AngleAxis(Data.CameraTilt, Vector3.right);
-            _isTarget = false;
+            Data.IsTaeget = false;
         }
     }
 
-    private void Gradually()
+    /// <summary>カメラを左右に動かす</summary>
+    private void Gradually(bool keyR,bool keyL)
     {
-        if (Input.GetKey(Data.CameraRight))
+        //右回転
+        if (keyR)
         {
             _camRot = Quaternion.AngleAxis(GameSerializeData.GameData._CameraTransform.eulerAngles.y - Data.CameraSpeed, Vector3.up) * Quaternion.AngleAxis(Data.CameraTilt, Vector3.right);
-            _isTarget = false;
+            Data.IsTaeget = false;
         }
-        if (Input.GetKey(Data.CameraLeft))
+        //左回転
+        if (keyL)
         {
             _camRot = Quaternion.AngleAxis(GameSerializeData.GameData._CameraTransform.eulerAngles.y + Data.CameraSpeed, Vector3.up) * Quaternion.AngleAxis(Data.CameraTilt, Vector3.right);
-            _isTarget = false;
+            Data.IsTaeget = false;
         }
     }
 
-    private void Target()
+    /// <summary>カメラの方向をターゲットの方向に合わせる</summary>
+    private void Target(bool key)
     {
-        if (Input.GetKeyDown(Data.CameraTarget))
+        if (key)
         {
-            _isTarget = !_isTarget;
+            //オンオフの切り替え
+            Data.IsTaeget = !Data.IsTaeget;
+            //高さをターゲットカメラかどうかで変更する
+            _camPos.y = Data.IsTaeget ? Data.CameraTargetHeight : Data.CameraHeight;
+
+            //ターゲット解除時に角度を元に戻す
+            if(!Data.IsTaeget)
+            {
+                _camRot = GameSerializeData.GameData._CameraTransform.rotation * Quaternion.AngleAxis(Data.CameraTargetTilt, Vector3.right);
+            }
         }
 
-        if (!_isTarget) return;
-        _camRot = Quaternion.LookRotation(GameSerializeData.GameData._AITransform.position, Vector3.up) * Quaternion.AngleAxis(Data.CameraTilt, Vector3.right);
+        //ターゲットの方向を向く
+        if (Data.IsTaeget)
+        {
+            _camRot = Quaternion.LookRotation(GameSerializeData.GameData._AITransform.position) * Quaternion.AngleAxis(Data.CameraTargetTilt, Vector3.right);
+        }
     }
 }

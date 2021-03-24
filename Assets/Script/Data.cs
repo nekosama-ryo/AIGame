@@ -31,10 +31,15 @@ public static class Data
 
 
     //カメラのパラメータ
-    public const float CameraDistance = 2.5f;//カメラとプレイヤーとの距離
+    public const float CameraHeight = 3f;//カメラの高さ
     public const float CameraTilt = 35f;//カメラの傾き
+    public const float CameraSpeed = 15f;//カメラの回転速度
     public const float CameraFollowSpeed = 5f;//カメラの追従速度
-    public const float CameraSpeed = 15f;//カメラの追従速度
+    public const float CameraDistance = 2.5f;//カメラとプレイヤーとの距離
+
+    static public bool IsTaeget = false;//カメラがターゲット状態かどうか
+    public const float CameraTargetHeight = 2f;//ターゲット時のカメラの高さ
+    public const float CameraTargetTilt = 15f;//ターゲット時のカメラの傾き
 
     //アニメーションのフラグ名
     static public string AnimationRun = "Run";
