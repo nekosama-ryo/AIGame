@@ -86,7 +86,7 @@ public class CharacterControl
     public void SetMove(Vector3 force)
     {
         //攻撃アニメーション再生中の場合移動処理を行わない
-        if (_ani.GetCurrentAnimatorStateInfo(0).IsTag(Data.AnimationTagAttack)|| _ani.GetCurrentAnimatorStateInfo(0).IsTag(Data.AnimationTagDamage)) return;
+        if (_ani.GetCurrentAnimatorStateInfo(0).IsTag(Data.AnimationTagAttack) || _ani.GetCurrentAnimatorStateInfo(0).IsTag(Data.AnimationTagDamage)) return;
 
         //アニメーションの再生
         bool aniFlag = force != Vector3.zero ? true : false;
@@ -101,6 +101,7 @@ public class CharacterControl
     //攻撃処理
     public void Atttack(bool flag)
     {
+        //ダメージを受けている際は処理を行わない
         if (_ani.GetCurrentAnimatorStateInfo(0).IsTag(Data.AnimationTagDamage)) return;
 
         //攻撃を行う
@@ -133,9 +134,25 @@ public class CharacterControl
         //ダメージを受けていない場合は以降の処理をしない
         if (!OnCollider) return;
 
-        Debug.Log(1);
-        //ダメージのアニメーションの再生
-        _ani.Play(Data.AnimationNameDamage,0,0);
-        OnCollider = false;
+        if (_ani.GetBool(Data.AnimationDefend))
+        {
+            //ガードのアニメーションの再生
+            _ani.Play(Data.AnimationNameDefense, 0, 0);
+        }
+        else
+        {
+            //ダメージのアニメーションの再生
+            _ani.Play(Data.AnimationNameDamage, 0, 0);
+        }
+            OnCollider = false;
+    }
+
+    public void Defense(bool flag)
+    {
+        //ダメージを受けている際は処理を行わない
+        if (_ani.GetCurrentAnimatorStateInfo(0).IsTag(Data.AnimationTagDamage)) return;
+
+        //ガード処理
+        _ani.SetBool(Data.AnimationDefend,flag);
     }
 }

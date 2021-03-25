@@ -22,7 +22,8 @@ public class TestAI
 
     public void OnUpdate()
     {
-        RandomAttack();
+        _charaScr.Defense(true);
+        //RandomAttack();
         _charaScr.Damage(ref Data.AIOnDamage);
     }
 

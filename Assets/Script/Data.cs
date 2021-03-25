@@ -51,6 +51,7 @@ public static class Data
 
 
     static public string AnimationNameDamage= "WGS_Damaged_Front";
+    static public string AnimationNameDefense = "WGS_Defend_Defend";
     //アニメーションのタグ名
     static public string AnimationTagAttack = "Attack";
     static public string AnimationTagDamage = "Damage";

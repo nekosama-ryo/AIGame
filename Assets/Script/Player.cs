@@ -35,7 +35,7 @@ public class Player
     public void OnUpdate()
     {
         KeyAttack();
-
+        _controlScr.Defense(Input.GetKey(Data.Defense));
 
 
         _controlScr.Damage(ref Data.PlayerOnDamage);
