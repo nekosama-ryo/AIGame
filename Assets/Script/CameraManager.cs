@@ -46,7 +46,7 @@ public class CameraManager
         {
             //カメラの角度をプレイヤーの向いている方向に設定
             _camRot = Quaternion.AngleAxis(GameSerializeData.GameData._PlayerTransform.eulerAngles.y, Vector3.up) * Quaternion.AngleAxis(Data.CameraTilt, Vector3.right);
-            Data.IsTaeget = false;
+            TargetReset();
         }
     }
 
@@ -57,13 +57,13 @@ public class CameraManager
         if (keyR)
         {
             _camRot = Quaternion.AngleAxis(GameSerializeData.GameData._CameraTransform.eulerAngles.y - Data.CameraSpeed, Vector3.up) * Quaternion.AngleAxis(Data.CameraTilt, Vector3.right);
-            Data.IsTaeget = false;
+            TargetReset();
         }
         //左回転
         if (keyL)
         {
             _camRot = Quaternion.AngleAxis(GameSerializeData.GameData._CameraTransform.eulerAngles.y + Data.CameraSpeed, Vector3.up) * Quaternion.AngleAxis(Data.CameraTilt, Vector3.right);
-            Data.IsTaeget = false;
+            TargetReset();
         }
     }
 
@@ -89,5 +89,13 @@ public class CameraManager
         {
             _camRot = Quaternion.LookRotation(GameSerializeData.GameData._AITransform.position) * Quaternion.AngleAxis(Data.CameraTargetTilt, Vector3.right);
         }
+    }
+    /// <summary>ターゲット状態を解除する</summary>
+    private void TargetReset()
+    {
+        //高さを変更する
+        _camPos.y =  Data.CameraHeight;
+        //ターゲットをオフにする
+        Data.IsTaeget = false;
     }
 }

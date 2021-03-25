@@ -29,6 +29,12 @@ public class Player
         KeyMove();
     }
 
+    public void OnUpdate()
+    {
+        KeyAttack();
+
+    }
+
     /// <summary>キー入力に応じて移動・回転する </summary>
     private void KeyMove()
     {
@@ -72,9 +78,13 @@ public class Player
         _force = _forward + _right;
 
         //力量に応じた移動・回転を行う
-        _controlScr.CharacterMove(_force);
+        _controlScr.SetMove(_force);
     }
 
+    private void KeyAttack()
+    {
+        _controlScr.Atttack(Input.GetKeyDown(Data.Attack));
+    }
 
 
 }

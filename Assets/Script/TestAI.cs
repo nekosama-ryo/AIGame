@@ -43,9 +43,9 @@ public class TestAI
             time += Time.deltaTime;
         }
 
-        _charaScr.CharacterMoveX(x1, x2);
-        _charaScr.CharacterMoveZ(z1, z2);
-        _charaScr.CharacterMove();
+        _charaScr.MoveX(x1, x2);
+        _charaScr.MoveZ(z1, z2);
+        _charaScr.SetMove();
 
         if (Physics.Raycast(GameSerializeData.GameData._AITransform.position, GameSerializeData.GameData._AITransform.forward, 3) && time > 2.5f)
         {

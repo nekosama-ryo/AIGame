@@ -62,6 +62,7 @@ public class GameManager : MonoBehaviour
             //ゲームシーン
             case Data.GameSceneNumber:
                 _cameraScr.OnUpdate();
+                _playerScr.OnUpdate();
                 break;
         }
     }

@@ -23,12 +23,9 @@ public static class Data
     static public readonly KeyCode CameraReset = KeyCode.R;
     static public readonly KeyCode CameraTarget = KeyCode.Tab;
 
-
     //キャラクターのパラメータ
     public const float CharacterSpeed = 250;//キャラクターの移動速度
-
-
-
+    public const float AttackTime = 0.8f;//攻撃行動の受付時間
 
     //カメラのパラメータ
     public const float CameraHeight = 3f;//カメラの高さ
@@ -41,12 +38,16 @@ public static class Data
     public const float CameraTargetHeight = 2f;//ターゲット時のカメラの高さ
     public const float CameraTargetTilt = 15f;//ターゲット時のカメラの傾き
 
+    //アニメーションのタグ名
+    static public string AnimationTagAttack = "Attack";
+
     //アニメーションのフラグ名
     static public string AnimationRun = "Run";
     static public string AnimationDie = "Die";
     static public string AnimationDefend = "Defend";
     static public string AnimationDamaged = "Damaged";
     static public string AnimationWalk = "Walk";
+    static public string AnimationAttack = "Attack";
 
 
 
@@ -58,16 +59,14 @@ public static class Data
 
 
 
-    //現在のシーン情報
-    static public int SceneNumber { get; private set; } = 0;
+    //シーンのパラメータ
+    static public int SceneNumber { get; private set; } = 0;//現在のシーン情報
 
-    //それぞれのシーンの番号
-    public const int TitleSceneNumber = 99;//タイトル
-    public const int GameSceneNumber = 0;//ゲームシーン
+    public const int TitleSceneNumber = 99;//タイトルシーンの番号
+    public const int GameSceneNumber = 0;//ゲームシーンの番号
 
-    //それぞれのデータタグ名
-    public const string TitleDataTagName = "TitleData";
-    public const string GameDataTagName = "GameData";
+    public const string TitleDataTagName = "TitleData"; //タイトルシーンタグ名
+    public const string GameDataTagName = "GameData";//ゲームシーンタグ名
 
     //処理
     /// <summary>初期化処理。最初期に呼び出す </summary>
