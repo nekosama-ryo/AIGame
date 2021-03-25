@@ -6,11 +6,12 @@ using UnityEngine;
 public class CharacterControl
 {
     //コンストラクタ
-    public CharacterControl(Transform Charatrs, Rigidbody CharaRigid, Animator CharaAnim)
+    public CharacterControl(Transform Charatrs, Rigidbody CharaRigid,Collider CharaCol, Animator CharaAnim)
     {
         //コンポーネントの設定
         _tr = Charatrs;
         _rb = CharaRigid;
+        _col = CharaCol;
         _ani = CharaAnim;
 
         //初期位置の取得
@@ -20,6 +21,7 @@ public class CharacterControl
     //コンポーネントの情報
     private Transform _tr = default;
     private Rigidbody _rb = default;
+    private Collider _col = default;
     private Animator _ani = default;
     //現在の移動力量
     private Vector3 _force = Vector3.zero;
@@ -70,7 +72,7 @@ public class CharacterControl
         _latestPos = _tr.position;
 
         //差が大きければキャラクターの向きを調整する
-        if(diff.magnitude>0.07f)
+        if (diff.magnitude > 0.07f)
         {
             _tr.rotation = Quaternion.LookRotation(diff);
         }
@@ -84,7 +86,7 @@ public class CharacterControl
     public void SetMove(Vector3 force)
     {
         //攻撃アニメーション再生中の場合移動処理を行わない
-        if (_ani.GetCurrentAnimatorStateInfo(0).IsTag(Data.AnimationTagAttack)) return;
+        if (_ani.GetCurrentAnimatorStateInfo(0).IsTag(Data.AnimationTagAttack)|| _ani.GetCurrentAnimatorStateInfo(0).IsTag(Data.AnimationTagDamage)) return;
 
         //アニメーションの再生
         bool aniFlag = force != Vector3.zero ? true : false;
@@ -99,9 +101,12 @@ public class CharacterControl
     //攻撃処理
     public void Atttack(bool flag)
     {
+        if (_ani.GetCurrentAnimatorStateInfo(0).IsTag(Data.AnimationTagDamage)) return;
+
         //攻撃を行う
         if (flag)
         {
+            _col.enabled = true;
             //受付時間のリセット
             _attackTime = 0;
             //アニメーションの再生
@@ -115,9 +120,22 @@ public class CharacterControl
         _attackTime += Time.deltaTime;
 
         //受付時間が過ぎたら、攻撃行動をリセットする。
-        if(_attackTime>Data.AttackTime)
+        if (_attackTime > Data.AttackTime)
         {
             _ani.SetBool(Data.AnimationAttack, false);
         }
+    }
+
+    public void Damage(ref bool OnCollider)
+    {
+        if (!_ani.GetBool(Data.AnimationAttack)) _col.enabled = false;
+
+        //ダメージを受けていない場合は以降の処理をしない
+        if (!OnCollider) return;
+
+        Debug.Log(1);
+        //ダメージのアニメーションの再生
+        _ani.Play(Data.AnimationNameDamage,0,0);
+        OnCollider = false;
     }
 }

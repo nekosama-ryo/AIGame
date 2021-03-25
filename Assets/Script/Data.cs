@@ -27,6 +27,14 @@ public static class Data
     public const float CharacterSpeed = 250;//キャラクターの移動速度
     public const float AttackTime = 0.8f;//攻撃行動の受付時間
 
+    //プレイヤーのパラメータ
+    static public bool PlayerOnDamage = false;//ダメージを受けたかどうか
+
+    //AIのパラメータ
+    static public bool AIOnDamage = false;//ダメージを受けたかどうか
+
+
+
     //カメラのパラメータ
     public const float CameraHeight = 3f;//カメラの高さ
     public const float CameraTilt = 35f;//カメラの傾き
@@ -38,8 +46,14 @@ public static class Data
     public const float CameraTargetHeight = 2f;//ターゲット時のカメラの高さ
     public const float CameraTargetTilt = 15f;//ターゲット時のカメラの傾き
 
+    //タグ名
+    static public string CharacterTagWeapon = "Weapon";//武器のタグ名
+
+
+    static public string AnimationNameDamage= "WGS_Damaged_Front";
     //アニメーションのタグ名
     static public string AnimationTagAttack = "Attack";
+    static public string AnimationTagDamage = "Damage";
 
     //アニメーションのフラグ名
     static public string AnimationRun = "Run";

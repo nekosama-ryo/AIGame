@@ -15,11 +15,14 @@ public class GameSerializeData : MonoBehaviour
     public Transform _PlayerTransform = default;
     public Rigidbody _PlayerRigidbody = default;
     public Animator _PlayerAnimator = default;
+    public Collider _PlayerCollider = default;
+    
 
     [Header("AI")]
     public Transform _AITransform = default;
     public Rigidbody _AIRigidbody = default;
     public Animator _AIAnimator = default;
+    public Collider _AICollider = default;
 
     [Header("カメラ")]
     public Transform _CameraTransform = default;

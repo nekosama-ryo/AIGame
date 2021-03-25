@@ -17,9 +17,12 @@ public class Player
     private Quaternion _camRot = Quaternion.identity;
     //左右の移動量
     private Vector3 _right = Vector3.zero;
+
+    private float DamageTime = 0;
     public void OnStart()
     {
-        _controlScr = new CharacterControl(GameSerializeData.GameData._PlayerTransform,GameSerializeData.GameData._PlayerRigidbody,GameSerializeData.GameData._PlayerAnimator);
+        _controlScr = new CharacterControl(GameSerializeData.GameData._PlayerTransform,GameSerializeData.GameData._PlayerRigidbody,
+            GameSerializeData.GameData._PlayerCollider,GameSerializeData.GameData._PlayerAnimator);
         //前後のスピードを設定
         _forwardSpeed = new Vector3(0, 0, Data.CharacterSpeed);
     }
@@ -33,6 +36,9 @@ public class Player
     {
         KeyAttack();
 
+
+
+        _controlScr.Damage(ref Data.PlayerOnDamage);
     }
 
     /// <summary>キー入力に応じて移動・回転する </summary>
