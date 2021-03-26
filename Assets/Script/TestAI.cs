@@ -17,14 +17,16 @@ public class TestAI
     float attackWaitTime = 5;
     public void OnStart()
     {
-        _charaScr = new CharacterControl(GameSerializeData.GameData._AITransform, GameSerializeData.GameData._AIRigidbody, GameSerializeData.GameData._AICollider, GameSerializeData.GameData._AIAnimator);
+        _charaScr = new CharacterControl(GameSerializeData.GameData._AITransform, 
+            GameSerializeData.GameData._AIRigidbody, GameSerializeData.GameData._AICollider, GameSerializeData.GameData._AIAnimator,GameSerializeData.GameData._AIHPBar);
     }
 
     public void OnUpdate()
     {
-        _charaScr.Defense(true);
-        //RandomAttack();
-        _charaScr.Damage(ref Data.AIOnDamage);
+        //_charaScr.Defense(true);
+        Data.AIHash = _charaScr.GetAnimationHash();
+        RandomAttack();
+        _charaScr.Damage(ref Data.AIOnDamage,Data.AIHash);
     }
 
     private void RandomRun()

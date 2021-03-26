@@ -6,29 +6,37 @@ using UnityEngine;
 public class CharacterControl
 {
     //コンストラクタ
-    public CharacterControl(Transform Charatrs, Rigidbody CharaRigid,Collider CharaCol, Animator CharaAnim)
+    public CharacterControl(Transform CharaTrs, Rigidbody CharaRigid, Collider CharaCol, Animator CharaAnim, Transform HpTrs)
     {
         //コンポーネントの設定
-        _tr = Charatrs;
+        _playerTrs = CharaTrs;
         _rb = CharaRigid;
         _col = CharaCol;
         _ani = CharaAnim;
+        _hpTrs = HpTrs;
 
         //初期位置の取得
-        _latestPos = _tr.position;
+        _latestPos = _playerTrs.position;
+        _hp = Data.CharacterMaxHp;
     }
 
     //コンポーネントの情報
-    private Transform _tr = default;
+    private Transform _playerTrs = default;
     private Rigidbody _rb = default;
     private Collider _col = default;
     private Animator _ani = default;
+    private Transform _hpTrs = default;
     //現在の移動力量
     private Vector3 _force = Vector3.zero;
     //前回の位置情報
     private Vector3 _latestPos = Vector3.zero;
     //攻撃受付時間の管理
     private float _attackTime = 0;
+    private float _attackWaitTime = 0;
+    //現在のHP
+    private float _hp = default;
+    //アニメーションのハッシュ値
+    private int _hash = 0;
 
     //移動処理
 
@@ -68,13 +76,13 @@ public class CharacterControl
     public void Rotation()
     {
         //前回の向きとの差を求める。
-        Vector3 diff = _tr.position - _latestPos;
-        _latestPos = _tr.position;
+        Vector3 diff = _playerTrs.position - _latestPos;
+        _latestPos = _playerTrs.position;
 
         //差が大きければキャラクターの向きを調整する
         if (diff.magnitude > 0.07f)
         {
-            _tr.rotation = Quaternion.LookRotation(diff);
+            _playerTrs.rotation = Quaternion.LookRotation(diff);
         }
     }
     /// <summary>力量に応じたキャラクターの移動・回転を行う </summary>
@@ -85,12 +93,11 @@ public class CharacterControl
     /// <summary>力量を指定してキャラクターの移動・回転を行う </summary>
     public void SetMove(Vector3 force)
     {
-        //攻撃アニメーション再生中の場合移動処理を行わない
-        if (_ani.GetCurrentAnimatorStateInfo(0).IsTag(Data.AnimationTagAttack) || _ani.GetCurrentAnimatorStateInfo(0).IsTag(Data.AnimationTagDamage)) return;
+        //行動アニメーション再生中の場合移動処理を行わない
+        if (!_ani.GetCurrentAnimatorStateInfo(0).IsTag(Data.AnimationTagMove)) return;
 
         //アニメーションの再生
-        bool aniFlag = force != Vector3.zero ? true : false;
-        _ani.SetBool(Data.AnimationRun, aniFlag);
+        _ani.SetBool(Data.AnimationRun, force != Vector3.zero ? true : false);
 
         //移動処理
         _rb.AddForce(force);
@@ -98,42 +105,53 @@ public class CharacterControl
         Rotation();
     }
 
-    //攻撃処理
+    /// <summary>攻撃を行う </summary>
     public void Atttack(bool flag)
     {
         //ダメージを受けている際は処理を行わない
-        if (_ani.GetCurrentAnimatorStateInfo(0).IsTag(Data.AnimationTagDamage)) return;
+        if (_ani.GetCurrentAnimatorStateInfo(0).IsTag(Data.AnimationTagDamage)) 
+        {
+            _attackWaitTime = Data.CharacterAttackWaitTime;
+            return;
+        }
 
-        //攻撃を行う
-        if (flag)
+        //攻撃を行う。ダメージを受けた直後は攻撃不可
+        if (flag&& _attackTime>_attackWaitTime)
         {
             _col.enabled = true;
             //受付時間のリセット
             _attackTime = 0;
+            _attackWaitTime = 0;
             //アニメーションの再生
             _ani.SetBool(Data.AnimationAttack, true);
         }
-
-        //攻撃行動中以外は以降の処理は行わない
-        if (!_ani.GetBool(Data.AnimationAttack)) return;
 
         //受付時間の加算
         _attackTime += Time.deltaTime;
 
         //受付時間が過ぎたら、攻撃行動をリセットする。
-        if (_attackTime > Data.AttackTime)
+        if (_attackTime > Data.CharacterAttackTime)
         {
             _ani.SetBool(Data.AnimationAttack, false);
         }
     }
 
-    public void Damage(ref bool OnCollider)
+    public int GetAnimationHash()
     {
+        //前回と同じ攻撃だったら足さない
+        return _ani.GetCurrentAnimatorStateInfo(0).shortNameHash;
+    }
+
+    public void Damage(ref bool OnCollider,int hash)
+    {
+        //攻撃時以外は剣の当たり判定を消す。
         if (!_ani.GetBool(Data.AnimationAttack)) _col.enabled = false;
 
-        //ダメージを受けていない場合は以降の処理をしない
-        if (!OnCollider) return;
+        //ダメージを受けていない場合、前回のダメージ時とハッシュ値が同じ場合は以降の処理をしない
+        if (!OnCollider || hash == _hash) return;
+        
 
+        //ガードを行っているかどうか
         if (_ani.GetBool(Data.AnimationDefend))
         {
             //ガードのアニメーションの再生
@@ -141,10 +159,27 @@ public class CharacterControl
         }
         else
         {
-            //ダメージのアニメーションの再生
-            _ani.Play(Data.AnimationNameDamage, 0, 0);
+            //体力を減らして、UIに体力量を反映させる。
+            Vector3 size = _hpTrs.localScale;
+            _hp = _hp - 1 < 0 ? 0 : _hp - 1;
+            size.x = size.x == 0 ? 0 : _hp / Data.CharacterMaxHp;
+            _hpTrs.localScale = size;
+
+            //死亡しているかどうか
+            if (_hp == 0)
+            {
+                //死亡処理
+                _col.enabled = false;
+                _ani.SetBool(Data.AnimationDie, true);
+            }
+            else
+            {
+                //ダメージのアニメーションの再生
+                _ani.Play(Data.AnimationNameDamage, 0, 0);
+            }
         }
-            OnCollider = false;
+        _hash = hash;
+        OnCollider = false;
     }
 
     public void Defense(bool flag)
@@ -153,6 +188,6 @@ public class CharacterControl
         if (_ani.GetCurrentAnimatorStateInfo(0).IsTag(Data.AnimationTagDamage)) return;
 
         //ガード処理
-        _ani.SetBool(Data.AnimationDefend,flag);
+        _ani.SetBool(Data.AnimationDefend, flag);
     }
 }

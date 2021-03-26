@@ -22,7 +22,7 @@ public class Player
     public void OnStart()
     {
         _controlScr = new CharacterControl(GameSerializeData.GameData._PlayerTransform,GameSerializeData.GameData._PlayerRigidbody,
-            GameSerializeData.GameData._PlayerCollider,GameSerializeData.GameData._PlayerAnimator);
+            GameSerializeData.GameData._PlayerCollider,GameSerializeData.GameData._PlayerAnimator,GameSerializeData.GameData._PlayerHPBar);
         //前後のスピードを設定
         _forwardSpeed = new Vector3(0, 0, Data.CharacterSpeed);
     }
@@ -30,15 +30,19 @@ public class Player
     public void OnFixedUpdate()
     {
         KeyMove();
+        Debug.Log("Hash：" + Data.PlayerHash);
+
     }
 
     public void OnUpdate()
     {
+        Data.PlayerHash = _controlScr.GetAnimationHash();
+
         KeyAttack();
         _controlScr.Defense(Input.GetKey(Data.Defense));
 
 
-        _controlScr.Damage(ref Data.PlayerOnDamage);
+        _controlScr.Damage(ref Data.PlayerOnDamage, Data.PlayerHash) ;
     }
 
     /// <summary>キー入力に応じて移動・回転する </summary>

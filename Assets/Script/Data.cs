@@ -25,13 +25,17 @@ public static class Data
 
     //キャラクターのパラメータ
     public const float CharacterSpeed = 250;//キャラクターの移動速度
-    public const float AttackTime = 0.8f;//攻撃行動の受付時間
+    public const float CharacterAttackTime = 0.8f;//攻撃行動の受付時間
+    public const float CharacterMaxHp = 10;//最大体力量
+    public const float CharacterAttackWaitTime = 1;//ダメージを受けた際に攻撃が可能になるまでの待機処理
 
     //プレイヤーのパラメータ
     static public bool PlayerOnDamage = false;//ダメージを受けたかどうか
+    static public int PlayerHash = 0;//現在の再生中のアニメーションのハッシュ値
 
     //AIのパラメータ
     static public bool AIOnDamage = false;//ダメージを受けたかどうか
+    static public int AIHash = 0;//現在の再生中のアニメーションのハッシュ値
 
 
 
@@ -47,22 +51,28 @@ public static class Data
     public const float CameraTargetTilt = 15f;//ターゲット時のカメラの傾き
 
     //タグ名
-    static public string CharacterTagWeapon = "Weapon";//武器のタグ名
+    public const string CharacterTagWeapon = "Weapon";//武器のタグ名
 
+    //アニメーションの名前
+    public const string AnimationNameDamage = "WGS_Damaged_Front";
+    public const string AnimationNameDefense = "WGS_Defend_Defend";
 
-    static public string AnimationNameDamage= "WGS_Damaged_Front";
-    static public string AnimationNameDefense = "WGS_Defend_Defend";
     //アニメーションのタグ名
-    static public string AnimationTagAttack = "Attack";
-    static public string AnimationTagDamage = "Damage";
+    public const string AnimationTagMove = "Move";
+    public const string AnimationTagAttack1 = "Attack1";
+    public const string AnimationTagAttack2 = "Attack2";
+    public const string AnimationTagAttack3 = "Attack3";
+    public const string AnimationTagAttack4 = "Attack4";
+    public const string AnimationTagAttack5 = "Attack5";
+    public const string AnimationTagDamage = "Damage";
 
     //アニメーションのフラグ名
-    static public string AnimationRun = "Run";
-    static public string AnimationDie = "Die";
-    static public string AnimationDefend = "Defend";
-    static public string AnimationDamaged = "Damaged";
-    static public string AnimationWalk = "Walk";
-    static public string AnimationAttack = "Attack";
+    public const string AnimationRun = "Run";
+    public const string AnimationDie = "Die";
+    public const string AnimationDefend = "Defend";
+    public const string AnimationDamaged = "Damaged";
+    public const string AnimationWalk = "Walk";
+    public const string AnimationAttack = "Attack";
 
 
 
