@@ -17,7 +17,10 @@ public class CharacterControl
 
         //初期位置の取得
         _latestPos = _playerTrs.position;
+        //初期HPを設定
         _hp = Data.CharacterMaxHp;
+        //ダメージアニメーションのハッシュ値を取得
+        _damageHash = Animator.StringToHash(Data.AnimationNameDamage);
     }
 
     //コンポーネントの情報
@@ -35,8 +38,11 @@ public class CharacterControl
     private float _attackWaitTime = 0;
     //現在のHP
     private float _hp = default;
-    //アニメーションのハッシュ値
+    //前回のダメージを受けた際のアニメーションハッシュ値
     private int _hash = 0;
+    //ダメージのアニメーションハッシュ値
+    private int _damageHash = default;
+
 
     //移動処理
 
@@ -109,47 +115,53 @@ public class CharacterControl
     public void Atttack(bool flag)
     {
         //ダメージを受けている際は処理を行わない
-        if (_ani.GetCurrentAnimatorStateInfo(0).IsTag(Data.AnimationTagDamage)) 
-        {
-            _attackWaitTime = Data.CharacterAttackWaitTime;
-            return;
-        }
+        if (_ani.GetCurrentAnimatorStateInfo(0).IsTag(Data.AnimationTagDamage)) return;
 
-        //攻撃を行う。ダメージを受けた直後は攻撃不可
-        if (flag&& _attackTime>_attackWaitTime)
+        //攻撃を行う。
+        if (flag)
         {
-            _col.enabled = true;
             //受付時間のリセット
             _attackTime = 0;
-            _attackWaitTime = 0;
+
             //アニメーションの再生
             _ani.SetBool(Data.AnimationAttack, true);
+        }
+
+        //攻撃行動中かどうか
+        if(_ani.GetCurrentAnimatorStateInfo(0).IsTag(Data.AnimationTagAttack))
+        {
+            //武器の当たり判定をオンにする。
+            _col.enabled = true;
+        }
+        else
+        {
+            //武器の当たり判定をオフにする。
+            _col.enabled = false;
+            return;
         }
 
         //受付時間の加算
         _attackTime += Time.deltaTime;
 
         //受付時間が過ぎたら、攻撃行動をリセットする。
-        if (_attackTime > Data.CharacterAttackTime)
-        {
-            _ani.SetBool(Data.AnimationAttack, false);
-        }
+        if (_attackTime > Data.CharacterAttackTime) _ani.SetBool(Data.AnimationAttack, false);
     }
 
+    /// <summary>現在行っているアニメーションのハッシュ値を返す。 </summary>
     public int GetAnimationHash()
     {
         //前回と同じ攻撃だったら足さない
         return _ani.GetCurrentAnimatorStateInfo(0).shortNameHash;
     }
 
-    public void Damage(ref bool OnCollider,int hash)
+    /// <summary>ダメージを受けた際の挙動 </summary>
+    public void DamageMove(ref bool OnCollider,int hash)
     {
-        //攻撃時以外は剣の当たり判定を消す。
-        if (!_ani.GetBool(Data.AnimationAttack)) _col.enabled = false;
-
-        //ダメージを受けていない場合、前回のダメージ時とハッシュ値が同じ場合は以降の処理をしない
+        //ダメージを受けていない場合は以降の処理をしない
         if (!OnCollider || hash == _hash) return;
-        
+        //前回のダメージ時とハッシュ値が同じか、ダメージハッシュ値の場合は以降の処理をしない
+        //連続ダメージが起きなくなってしまう
+        if (hash==_hash||hash==_damageHash) return;
 
         //ガードを行っているかどうか
         if (_ani.GetBool(Data.AnimationDefend))
@@ -159,29 +171,44 @@ public class CharacterControl
         }
         else
         {
-            //体力を減らして、UIに体力量を反映させる。
-            Vector3 size = _hpTrs.localScale;
-            _hp = _hp - 1 < 0 ? 0 : _hp - 1;
-            size.x = size.x == 0 ? 0 : _hp / Data.CharacterMaxHp;
-            _hpTrs.localScale = size;
-
-            //死亡しているかどうか
-            if (_hp == 0)
-            {
-                //死亡処理
-                _col.enabled = false;
-                _ani.SetBool(Data.AnimationDie, true);
-            }
-            else
-            {
-                //ダメージのアニメーションの再生
-                _ani.Play(Data.AnimationNameDamage, 0, 0);
-            }
+            //ダメージ処理
+            Damage();
         }
+
+        //ハッシュ値を保持しておく。
         _hash = hash;
+        //当たり判定をリセット
         OnCollider = false;
     }
 
+    /// <summary>ダメージの処理 </summary>
+    private void Damage()
+    {
+        //体力バーの長さを取得
+        Vector3 size = _hpTrs.localScale;
+        //体力を減らす。０以下にはならない。
+        _hp = _hp - 1 < 0 ? 0 : _hp - 1;
+        //体力バーの長さを調整
+        size.x = size.x == 0 ? 0 : _hp / Data.CharacterMaxHp;
+        //体力バーの長さを画面に反映
+        _hpTrs.localScale = size;
+
+        //死亡しているかどうか
+        if (_hp == 0)
+        {
+            //死亡処理
+            _col.enabled = false;
+            //死亡のアニメーションの再生
+            _ani.SetBool(Data.AnimationDie, true);
+        }
+        else
+        {
+            //ダメージのアニメーションの再生
+            _ani.Play(Data.AnimationNameDamage, 0, 0);
+        }
+    }
+
+    /// <summary>防御を行う </summary>
     public void Defense(bool flag)
     {
         //ダメージを受けている際は処理を行わない

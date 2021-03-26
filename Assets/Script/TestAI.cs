@@ -26,7 +26,7 @@ public class TestAI
         //_charaScr.Defense(true);
         Data.AIHash = _charaScr.GetAnimationHash();
         RandomAttack();
-        _charaScr.Damage(ref Data.AIOnDamage,Data.AIHash);
+        _charaScr.DamageMove(ref Data.AIOnDamage,Data.AIHash);
     }
 
     private void RandomRun()

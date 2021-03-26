@@ -42,7 +42,7 @@ public class Player
         _controlScr.Defense(Input.GetKey(Data.Defense));
 
 
-        _controlScr.Damage(ref Data.PlayerOnDamage, Data.PlayerHash) ;
+        _controlScr.DamageMove(ref Data.PlayerOnDamage, Data.PlayerHash) ;
     }
 
     /// <summary>キー入力に応じて移動・回転する </summary>

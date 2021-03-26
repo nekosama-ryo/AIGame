@@ -25,7 +25,7 @@ public static class Data
 
     //キャラクターのパラメータ
     public const float CharacterSpeed = 250;//キャラクターの移動速度
-    public const float CharacterAttackTime = 0.8f;//攻撃行動の受付時間
+    public const float CharacterAttackTime = 0.5f;//攻撃行動の受付時間
     public const float CharacterMaxHp = 10;//最大体力量
     public const float CharacterAttackWaitTime = 1;//ダメージを受けた際に攻撃が可能になるまでの待機処理
 
@@ -59,11 +59,7 @@ public static class Data
 
     //アニメーションのタグ名
     public const string AnimationTagMove = "Move";
-    public const string AnimationTagAttack1 = "Attack1";
-    public const string AnimationTagAttack2 = "Attack2";
-    public const string AnimationTagAttack3 = "Attack3";
-    public const string AnimationTagAttack4 = "Attack4";
-    public const string AnimationTagAttack5 = "Attack5";
+    public const string AnimationTagAttack = "Attack";
     public const string AnimationTagDamage = "Damage";
 
     //アニメーションのフラグ名
