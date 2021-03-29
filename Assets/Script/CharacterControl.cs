@@ -19,8 +19,6 @@ public class CharacterControl
         _latestPos = _playerTrs.position;
         //初期HPを設定
         _hp = Data.CharacterMaxHp;
-        //ダメージアニメーションのハッシュ値を取得
-        _damageHash = Animator.StringToHash(Data.AnimationNameDamage);
     }
 
     //コンポーネントの情報
@@ -35,14 +33,8 @@ public class CharacterControl
     private Vector3 _latestPos = Vector3.zero;
     //攻撃受付時間の管理
     private float _attackTime = 0;
-    private float _attackWaitTime = 0;
     //現在のHP
     private float _hp = default;
-    //前回のダメージを受けた際のアニメーションハッシュ値
-    private int _hash = 0;
-    //ダメージのアニメーションハッシュ値
-    private int _damageHash = default;
-
 
     //移動処理
 
@@ -109,16 +101,40 @@ public class CharacterControl
         _rb.AddForce(force);
         //回転処理
         Rotation();
+
+        //テスト
+        //Vector3 eyeDir = _playerTrs.forward; // プレイヤーの視線ベクトル。fowardが正しいかはモデルの配置等にも影響するので自分で正しいものを入れてください
+        //Vector3 playerPos = _playerTrs.position; // プレイヤーの位置
+        //Vector3 enemyPos=GameSerializeData.GameData._AITransform.position; // 敵の位置
+
+        //float angle = 45;
+
+        //// プレイヤーと敵を結ぶ線と視線の角度差がangle以内なら当たり
+        //if (Vector3.Angle((enemyPos - playerPos).normalized, eyeDir) <= angle)
+        //{
+        //    Debug.Log(1);
+        //    // 範囲内の処理
+        //}
+
     }
 
     /// <summary>攻撃を行う </summary>
     public void Atttack(bool flag)
     {
         //ダメージを受けている際は処理を行わない
-        if (_ani.GetCurrentAnimatorStateInfo(0).IsTag(Data.AnimationTagDamage)) return;
+        if (_ani.GetCurrentAnimatorStateInfo(0).IsTag(Data.AnimationTagDamage))
+        {
+            //値のリセット
+            _attackTime = 0;
+            _ani.SetBool(Data.AnimationAttack, false);
+            return;
+        }
+
+        //受付時間の加算
+        _attackTime += Time.deltaTime;
 
         //攻撃を行う。
-        if (flag)
+        if (flag&&Data.CharacterAttackWaitTime<_attackTime)
         {
             //受付時間のリセット
             _attackTime = 0;
@@ -140,28 +156,15 @@ public class CharacterControl
             return;
         }
 
-        //受付時間の加算
-        _attackTime += Time.deltaTime;
-
         //受付時間が過ぎたら、攻撃行動をリセットする。
         if (_attackTime > Data.CharacterAttackTime) _ani.SetBool(Data.AnimationAttack, false);
     }
 
-    /// <summary>現在行っているアニメーションのハッシュ値を返す。 </summary>
-    public int GetAnimationHash()
-    {
-        //前回と同じ攻撃だったら足さない
-        return _ani.GetCurrentAnimatorStateInfo(0).shortNameHash;
-    }
-
     /// <summary>ダメージを受けた際の挙動 </summary>
-    public void DamageMove(ref bool OnCollider,int hash)
+    public void DamageMove(ref bool OnCollider)
     {
         //ダメージを受けていない場合は以降の処理をしない
-        if (!OnCollider || hash == _hash) return;
-        //前回のダメージ時とハッシュ値が同じか、ダメージハッシュ値の場合は以降の処理をしない
-        //連続ダメージが起きなくなってしまう
-        if (hash==_hash||hash==_damageHash) return;
+        if (!OnCollider) return;
 
         //ガードを行っているかどうか
         if (_ani.GetBool(Data.AnimationDefend))
@@ -175,8 +178,8 @@ public class CharacterControl
             Damage();
         }
 
-        //ハッシュ値を保持しておく。
-        _hash = hash;
+        //攻撃の判定をなくす（ループが起きないように）
+        _col.enabled = false;
         //当たり判定をリセット
         OnCollider = false;
     }
@@ -203,6 +206,7 @@ public class CharacterControl
         }
         else
         {
+            //Debug.Log("ダメージ再生");
             //ダメージのアニメーションの再生
             _ani.Play(Data.AnimationNameDamage, 0, 0);
         }

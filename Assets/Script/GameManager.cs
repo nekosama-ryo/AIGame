@@ -51,7 +51,6 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-
         //各シーンで行う処理
         switch (Data.SceneNumber)
         {

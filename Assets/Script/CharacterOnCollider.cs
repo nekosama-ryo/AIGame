@@ -15,28 +15,30 @@ public class CharacterOnCollider : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag(Data.CharacterTagWeapon)) OnWeapon(true, other.gameObject.name);
+        if (other.CompareTag(Data.CharacterTagWeapon)) OnWeapon(true);
     }
 
-    private void OnWeapon(bool on, string s)
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag(Data.CharacterTagWeapon)) OnWeapon(false);
+    }
+
+    private void OnWeapon(bool on)
     {
         switch (caharacter)
         {
             case CharacterEnum.player:
                 {
+                    Debug.Log(on);
                     Data.PlayerOnDamage = on;
-                    //Debug.Log("ーーーーPlayerは" + s + "でダメージを受けた-ーーー");
-                    //Debug.Log("Hash：" + Data.PlayerHash + "　　前回のHash：" + hash);
                 }
-                break;
+                return;
 
             case CharacterEnum.ai:
                 {
                     Data.AIOnDamage = on;
-                    //Debug.Log("ーーーーAIは" + s + "でダメージを受けたーーーー");
-                    //Debug.Log("Hash：" + Data.AIHash + "　　前回のHash：" + hash);
                 }
-                break;
+                return;
 
             default:
                 return;

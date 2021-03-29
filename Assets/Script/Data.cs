@@ -26,8 +26,8 @@ public static class Data
     //キャラクターのパラメータ
     public const float CharacterSpeed = 250;//キャラクターの移動速度
     public const float CharacterAttackTime = 0.5f;//攻撃行動の受付時間
-    public const float CharacterMaxHp = 10;//最大体力量
-    public const float CharacterAttackWaitTime = 1;//ダメージを受けた際に攻撃が可能になるまでの待機処理
+    public const float CharacterMaxHp = 1000;//最大体力量
+    public const float CharacterAttackWaitTime = 0.3f;//可能になるまでの待機処理
 
     //プレイヤーのパラメータ
     static public bool PlayerOnDamage = false;//ダメージを受けたかどうか

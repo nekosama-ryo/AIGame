@@ -30,19 +30,17 @@ public class Player
     public void OnFixedUpdate()
     {
         KeyMove();
-        Debug.Log("Hash：" + Data.PlayerHash);
+        //Debug.Log("Hash：" + Data.PlayerHash);
 
     }
 
     public void OnUpdate()
     {
-        Data.PlayerHash = _controlScr.GetAnimationHash();
-
         KeyAttack();
         _controlScr.Defense(Input.GetKey(Data.Defense));
 
 
-        _controlScr.DamageMove(ref Data.PlayerOnDamage, Data.PlayerHash) ;
+        _controlScr.DamageMove(ref Data.PlayerOnDamage) ;
     }
 
     /// <summary>キー入力に応じて移動・回転する </summary>
