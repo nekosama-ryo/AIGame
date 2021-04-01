@@ -28,6 +28,7 @@ public static class Data
     public const float CharacterAttackTime = 0.5f;//攻撃行動の受付時間
     public const float CharacterMaxHp = 1000;//最大体力量
     public const float CharacterAttackWaitTime = 0.3f;//可能になるまでの待機処理
+    public const float CharacterDefenseAngle = 90;//防御可能な範囲
 
     //プレイヤーのパラメータ
     static public bool PlayerOnDamage = false;//ダメージを受けたかどうか
@@ -36,6 +37,13 @@ public static class Data
     //AIのパラメータ
     static public bool AIOnDamage = false;//ダメージを受けたかどうか
     static public int AIHash = 0;//現在の再生中のアニメーションのハッシュ値
+
+    //AIの思考パラメータ
+    static public int AIReflexes = 0;//反射神経
+    static public int AIConcentration = 0;//集中力
+    static public int AIActive = 0;//活発
+    static public int AIIntellectual = 0;//知的
+    static public int AIcarefully = 0;//慎重
 
 
 

@@ -18,11 +18,10 @@ public class Player
     //左右の移動量
     private Vector3 _right = Vector3.zero;
 
-    private float DamageTime = 0;
     public void OnStart()
     {
-        _controlScr = new CharacterControl(GameSerializeData.GameData._PlayerTransform,GameSerializeData.GameData._PlayerRigidbody,
-            GameSerializeData.GameData._PlayerCollider,GameSerializeData.GameData._PlayerAnimator,GameSerializeData.GameData._PlayerHPBar);
+        _controlScr = new CharacterControl(GameSerializeData.GameData._PlayerTransform,GameSerializeData.GameData._AITransform,
+            GameSerializeData.GameData._PlayerRigidbody,GameSerializeData.GameData._PlayerCollider,GameSerializeData.GameData._PlayerAnimator,GameSerializeData.GameData._PlayerHPBar);
         //前後のスピードを設定
         _forwardSpeed = new Vector3(0, 0, Data.CharacterSpeed);
     }
@@ -30,8 +29,6 @@ public class Player
     public void OnFixedUpdate()
     {
         KeyMove();
-        //Debug.Log("Hash：" + Data.PlayerHash);
-
     }
 
     public void OnUpdate()

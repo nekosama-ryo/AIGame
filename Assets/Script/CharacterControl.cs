@@ -6,23 +6,25 @@ using UnityEngine;
 public class CharacterControl
 {
     //コンストラクタ
-    public CharacterControl(Transform CharaTrs, Rigidbody CharaRigid, Collider CharaCol, Animator CharaAnim, Transform HpTrs)
+    public CharacterControl(Transform CharaTrs,Transform OpponentTrs, Rigidbody CharaRigid, Collider CharaCol, Animator CharaAnim, Transform HpTrs)
     {
         //コンポーネントの設定
-        _playerTrs = CharaTrs;
+        _trs = CharaTrs;
+        _opponentTrs = OpponentTrs;
         _rb = CharaRigid;
         _col = CharaCol;
         _ani = CharaAnim;
         _hpTrs = HpTrs;
 
         //初期位置の取得
-        _latestPos = _playerTrs.position;
+        _latestPos = _trs.position;
         //初期HPを設定
         _hp = Data.CharacterMaxHp;
     }
 
     //コンポーネントの情報
-    private Transform _playerTrs = default;
+    private Transform _trs = default;
+    private Transform _opponentTrs = default;
     private Rigidbody _rb = default;
     private Collider _col = default;
     private Animator _ani = default;
@@ -37,9 +39,24 @@ public class CharacterControl
     private float _hp = default;
 
     //移動処理
-
     /// <summary>フラグに応じてキャラクターのX軸に力を加える </summary>
     public void MoveX(bool flag, bool minusFlag)
+    {
+        //どちらも押されていないか、どちらも押されている、力が最大値を超えた場合
+        if (!flag && !minusFlag || flag && minusFlag)
+        {
+            //力のリセット
+            _force.x = 0;
+            return;
+        }
+
+        //力の加える方向を調べる
+        int i = flag ? 1 : -1;
+        //加える力を設定
+        _force.x = Data.CharacterSpeed * i;
+    }
+    /// <summary>フラグに応じてキャラクターのX軸に力を加える </summary>
+    public void MoveForwardX(bool flag, bool minusFlag)
     {
         //どちらも押されていないか、どちらも押されている、力が最大値を超えた場合
         if (!flag && !minusFlag || flag && minusFlag)
@@ -74,13 +91,13 @@ public class CharacterControl
     public void Rotation()
     {
         //前回の向きとの差を求める。
-        Vector3 diff = _playerTrs.position - _latestPos;
-        _latestPos = _playerTrs.position;
+        Vector3 diff = _trs.position - _latestPos;
+        _latestPos = _trs.position;
 
         //差が大きければキャラクターの向きを調整する
         if (diff.magnitude > 0.07f)
         {
-            _playerTrs.rotation = Quaternion.LookRotation(diff);
+            _trs.rotation = Quaternion.LookRotation(diff);
         }
     }
     /// <summary>力量に応じたキャラクターの移動・回転を行う </summary>
@@ -101,23 +118,9 @@ public class CharacterControl
         _rb.AddForce(force);
         //回転処理
         Rotation();
-
-        //テスト
-        //Vector3 eyeDir = _playerTrs.forward; // プレイヤーの視線ベクトル。fowardが正しいかはモデルの配置等にも影響するので自分で正しいものを入れてください
-        //Vector3 playerPos = _playerTrs.position; // プレイヤーの位置
-        //Vector3 enemyPos=GameSerializeData.GameData._AITransform.position; // 敵の位置
-
-        //float angle = 45;
-
-        //// プレイヤーと敵を結ぶ線と視線の角度差がangle以内なら当たり
-        //if (Vector3.Angle((enemyPos - playerPos).normalized, eyeDir) <= angle)
-        //{
-        //    Debug.Log(1);
-        //    // 範囲内の処理
-        //}
-
     }
 
+    //攻撃処理
     /// <summary>攻撃を行う </summary>
     public void Atttack(bool flag)
     {
@@ -160,14 +163,15 @@ public class CharacterControl
         if (_attackTime > Data.CharacterAttackTime) _ani.SetBool(Data.AnimationAttack, false);
     }
 
+    //ダメージ処理
     /// <summary>ダメージを受けた際の挙動 </summary>
     public void DamageMove(ref bool OnCollider)
     {
         //ダメージを受けていない場合は以降の処理をしない
         if (!OnCollider) return;
 
-        //ガードを行っているかどうか
-        if (_ani.GetBool(Data.AnimationDefend))
+        //ガード行動を行っており、攻撃がガード方向からきていた場合ガードを行う
+        if (_ani.GetBool(Data.AnimationDefend)&& Vector3.Angle((_opponentTrs.position - _trs.position).normalized, _trs.forward) <= Data.CharacterDefenseAngle)
         {
             //ガードのアニメーションの再生
             _ani.Play(Data.AnimationNameDefense, 0, 0);
@@ -183,7 +187,6 @@ public class CharacterControl
         //当たり判定をリセット
         OnCollider = false;
     }
-
     /// <summary>ダメージの処理 </summary>
     private void Damage()
     {
@@ -211,7 +214,6 @@ public class CharacterControl
             _ani.Play(Data.AnimationNameDamage, 0, 0);
         }
     }
-
     /// <summary>防御を行う </summary>
     public void Defense(bool flag)
     {
@@ -221,4 +223,11 @@ public class CharacterControl
         //ガード処理
         _ani.SetBool(Data.AnimationDefend, flag);
     }
+
+    /// <summary>相手の方向を向く </summary>
+    public void Look()
+    {
+        _trs.LookAt(_opponentTrs);
+    }
+
 }

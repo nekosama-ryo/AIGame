@@ -87,7 +87,7 @@ public class CameraManager
         //ターゲットの方向を向く
         if (Data.IsTaeget)
         {
-            _camRot = Quaternion.LookRotation(GameSerializeData.GameData._AITransform.position) * Quaternion.AngleAxis(Data.CameraTargetTilt, Vector3.right);
+            _camRot = Quaternion.LookRotation(GameSerializeData.GameData._AITransform.position,Vector3.up) * Quaternion.AngleAxis(Data.CameraTargetTilt, Vector3.right);
         }
     }
     /// <summary>ターゲット状態を解除する</summary>
